@@ -270,4 +270,68 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--worker
 
 ---
 
-## 🧪 Running the
+## 🧪 Running the Load Test
+
+```bash
+# Against local API
+python tools/load_test.py --url http://localhost:8000
+
+# Against deployed API
+python tools/load_test.py --url https://credit-risk-api-xxxx.onrender.com
+
+# Custom number of requests
+python tools/load_test.py --url http://localhost:8000 --n 500
+```
+
+Results are saved to `tools/load_test_results.json`.
+
+---
+
+## 💡 Key Design Decisions
+
+**Why Gradient Boosting over Logistic Regression?**  
+Credit risk data is non-linear — the relationship between debt-to-income ratio and default probability isn't a straight line. GBM captures these interactions automatically.
+
+**Why load the model at startup?**  
+Loading a `.joblib` file takes ~100–500ms. Loading it per request would make every prediction 100× slower. Load once at startup, serve thousands of requests.
+
+**Why Pydantic schemas?**  
+FastAPI + Pydantic validates every incoming request automatically. If `credit_score` is missing or `age` is a string, the API returns a clear 422 error without any manual validation code.
+
+**Why structured JSON logging?**  
+Plain text logs (`"prediction made"`) can't be parsed by monitoring tools. JSON logs can be ingested by Datadog, Grafana, or CloudWatch to build dashboards, set alerts, and trace individual requests.
+
+---
+
+## 🔁 Reflection
+
+The biggest mindset shift in this project was thinking about a model as a **service**, not a script.
+
+A notebook runs once and produces a result. A service must handle concurrent requests gracefully, fail with clear error messages, log everything useful without logging anything sensitive, and run identically in development, staging, and production.
+
+Docker solved the environment problem completely. Once the container ran locally, deployment to Render was just pushing to GitHub — no "it works on my machine" surprises.
+
+The drift report was the most eye-opening part. Even simulating mild income growth (5–30%) triggered drift alerts on multiple features, showing exactly why monitoring is non-negotiable in production ML systems. A model that was accurate at deployment can silently degrade as the world changes around it.
+
+---
+
+## 🛠️ Tech Stack
+
+| Tool | Purpose |
+|---|---|
+| **FastAPI** | REST API framework with auto-generated docs |
+| **Pydantic** | Input validation and schema definition |
+| **scikit-learn** | Model training (Gradient Boosting) |
+| **joblib** | Model serialisation and loading |
+| **Docker** | Containerisation for reproducible deployment |
+| **Render** | Free cloud hosting for the Docker container |
+| **Evidently** | Data drift detection and HTML reporting |
+| **uvicorn** | ASGI server running FastAPI |
+
+---
+
+## 👨‍💻 Author
+
+**Manvith Devadiga**  
+AI/ML Engineering Student — NMAM Institute of Technology, Mangaluru  
+[LinkedIn](https://linkedin.com/in/manvith-devadiga) · [GitHub](https://github.com/manvithh06)
