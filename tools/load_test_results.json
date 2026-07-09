@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8000/predict",
+  "n_requests": 100,
+  "successful": 100,
+  "errors": 0,
+  "p50_ms": 6.4,
+  "p95_ms": 10.04,
+  "p99_ms": 17.65,
+  "mean_ms": 6.77,
+  "passed_sla": true
+}
