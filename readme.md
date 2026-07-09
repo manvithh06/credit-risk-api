@@ -8,9 +8,8 @@ A production-ready machine learning API that predicts credit default risk in rea
 
 | Resource | URL |
 |---|---|
-| **Live API** | https://credit-risk-api-xxxx.onrender.com |
-| **Interactive Docs** | https://credit-risk-api-xxxx.onrender.com/docs |
-| **Health Check** | https://credit-risk-api-xxxx.onrender.com/health |
+| **Live API** | [https://credit-risk-api-xxxx.onrender.com](https://credit-risk-api-gjc9.onrender.com/) |
+
 
 > ⚠️ Hosted on Render free tier — first request after inactivity may take ~30s (cold start). Subsequent requests respond in under 20ms.
 
